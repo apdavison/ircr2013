@@ -21,8 +21,8 @@ dat = dat[60:]
 
 # Slightly filter the image with a median filter in order to refine its histogram.
 filtdat = ndimage.median_filter(dat, size=(7,7))
-hi_dat = np.histogram(dat, bins=np.arange(256))
-hi_filtdat = np.histogram(filtdat, bins=np.arange(256))
+hi_dat = np.histogram(dat, bins=np.arange(256), new=False)
+hi_filtdat = np.histogram(filtdat, bins=np.arange(256), new=False)
 pl.plot(hi_dat[1], hi_dat[0], 'b-')
 pl.plot(hi_filtdat[1], hi_filtdat[0], 'g-')
 pl.xlim((-5, 260))
@@ -37,7 +37,7 @@ glass = filtdat > 114
 # Create image with each phase a different colour
 phases = void.astype(np.int) + 2*glass.astype(np.int) + 3*sand.astype(np.int)
 pl.clf()
-pl.imshow(phases, cmap=cm.copper)
+pl.imshow(phases, cmap=cm.copper, origin="lower")
 remove_axes()
 pl.colorbar()
 pl.savefig("Data/%s_phases.png" % img_id)
@@ -51,10 +51,10 @@ remove_small_sand = mask[sand_labels.ravel()].reshape(sand_labels.shape)
 
 pl.clf()
 pl.subplot(1, 2, 1)
-pl.imshow(sand, cmap=cm.gist_gray)
+pl.imshow(sand, cmap=cm.gist_gray, origin="lower")
 remove_axes()
 pl.subplot(1, 2, 2)
-pl.imshow(remove_small_sand, cmap=cm.gist_gray)
+pl.imshow(remove_small_sand, cmap=cm.gist_gray, origin="lower")
 remove_axes()
 pl.savefig("Data/%s_sand.png" % img_id)
 
