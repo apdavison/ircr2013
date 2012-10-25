@@ -6,8 +6,15 @@ import numpy as np
 import pylab as pl
 import matplotlib.cm as cm
 from scipy import ndimage
+from datetime import datetime
+import os
 
 img_id = "MV_HFV_012"
+timestamp = datetime.now()
+output_dir = "Data/%s" % timestamp.strftime("%Y%m%d")
+if not os.path.exists(output_dir):
+    os.makedirs(output_dir)
+output_prefix = os.path.join(output_dir, "%s_%s" % (img_id, timestamp.strftime("%H%M%S")))
 
 def remove_axes():
     ax = pl.gca()
@@ -27,7 +34,7 @@ pl.plot(hi_dat[1], hi_dat[0], 'b-')
 pl.plot(hi_filtdat[1], hi_filtdat[0], 'g-')
 pl.xlim((-5, 260))
 pl.ylim((-1000, 145000))
-pl.savefig("Data/%s_histogram.png" % img_id)
+pl.savefig("%s_histogram.png" % output_prefix)
 
 # Define masks for sand pixels, glass pixels and bubble pixels
 void = filtdat <= 50
@@ -40,7 +47,7 @@ pl.clf()
 pl.imshow(phases, cmap=cm.copper, origin="lower")
 remove_axes()
 pl.colorbar()
-pl.savefig("Data/%s_phases.png" % img_id)
+pl.savefig("%s_phases.png" % output_prefix)
 
 # Clean the phases
 sand_op = ndimage.binary_opening(sand, iterations=2)
@@ -56,7 +63,7 @@ remove_axes()
 pl.subplot(1, 2, 2)
 pl.imshow(remove_small_sand, cmap=cm.gist_gray, origin="lower")
 remove_axes()
-pl.savefig("Data/%s_sand.png" % img_id)
+pl.savefig("%s_sand.png" % output_prefix)
 
 # Compute the mean size of bubbles.
 bubbles_labels, bubbles_nb = ndimage.label(void)
@@ -64,3 +71,4 @@ bubbles_areas = np.bincount(bubbles_labels.ravel())[1:]
 mean_bubble_size = bubbles_areas.mean()
 median_bubble_size = np.median(bubbles_areas)
 print mean_bubble_size, median_bubble_size
+
