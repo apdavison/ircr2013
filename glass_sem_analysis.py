@@ -10,7 +10,11 @@ from datetime import datetime
 import os
 import sys
 
-img_file = sys.argv[1]
+parameter_file, img_file = sys.argv[1:3]
+
+parameters = {}
+execfile(parameter_file, parameters)
+ 
 img_id, ext = os.path.splitext(img_file)
 assert ext == ".jpg"
 
@@ -31,7 +35,8 @@ dat = pl.imread('%s.jpg' % img_id)
 dat = dat[60:]
 
 # Slightly filter the image with a median filter in order to refine its histogram.
-filtdat = ndimage.median_filter(dat, size=(7,7))
+filter_size = (parameters["filter_size"], parameters["filter_size"])
+filtdat = ndimage.median_filter(dat, size=filter_size)
 hi_dat = np.histogram(dat, bins=np.arange(256), new=False)
 hi_filtdat = np.histogram(filtdat, bins=np.arange(256), new=False)
 pl.plot(hi_dat[1], hi_dat[0], 'b-')
@@ -41,23 +46,24 @@ pl.ylim((-1000, 145000))
 pl.savefig("%s_histogram.png" % output_prefix)
 
 # Define masks for sand pixels, glass pixels and bubble pixels
-void = filtdat <= 50
-sand = np.logical_and(filtdat > 50, filtdat <= 114)
-glass = filtdat > 114
+void = filtdat <= parameters["bubble_sand_boundary"]
+sand = np.logical_and(filtdat > parameters["bubble_sand_boundary"], filtdat <= parameters["sand_glass_boundary"])
+glass = filtdat > parameters["sand_glass_boundary"]
 
 # Create image with each phase a different colour
 phases = void.astype(np.int) + 2*glass.astype(np.int) + 3*sand.astype(np.int)
 pl.clf()
-pl.imshow(phases, cmap=cm.copper, origin="lower")
+colourmap = getattr(cm, parameters["phases_colourmap"])
+pl.imshow(phases, cmap=colourmap, origin="lower")
 remove_axes()
 pl.colorbar()
 pl.savefig("%s_phases.png" % output_prefix)
 
 # Clean the phases
-sand_op = ndimage.binary_opening(sand, iterations=2)
+sand_op = ndimage.binary_opening(sand, iterations=parameters["cleaning_iterations"])
 sand_labels, sand_nb = ndimage.label(sand_op)
 sand_areas = np.array(ndimage.sum(sand_op, sand_labels, np.arange(sand_labels.max()+1)))
-mask = sand_areas > 100
+mask = sand_areas > parameters["cleaning_threshold"]
 remove_small_sand = mask[sand_labels.ravel()].reshape(sand_labels.shape)
 
 pl.clf()

@@ -1,0 +1,9 @@
+# parameters for analysis of SEM images of glass samples
+
+filter_size = 7
+bubble_sand_boundary = 50
+sand_glass_boundary = 114
+phases_colourmap = "copper"
+cleaning_iterations = 2
+cleaning_threshold = 100
+
