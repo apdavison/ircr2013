@@ -8,8 +8,12 @@ import matplotlib.cm as cm
 from scipy import ndimage
 from datetime import datetime
 import os
+import sys
 
-img_id = "MV_HFV_012"
+img_file = sys.argv[1]
+img_id, ext = os.path.splitext(img_file)
+assert ext == ".jpg"
+
 timestamp = datetime.now()
 output_dir = "Data/%s" % timestamp.strftime("%Y%m%d")
 if not os.path.exists(output_dir):
