@@ -16,7 +16,6 @@ parameters = {}
 execfile(parameter_file, parameters)
  
 img_id, ext = os.path.splitext(img_file)
-assert ext == ".jpg"
 
 timestamp = datetime.now()
 output_dir = "Data/%s" % timestamp.strftime("%Y%m%d")
@@ -29,7 +28,7 @@ def remove_axes():
     ax.xaxis.set_visible(False)
     ax.yaxis.set_visible(False)
 
-dat = pl.imread('%s.jpg' % img_id)
+dat = pl.imread(img_file)
 
 # Crop the image to remove the lower panel with measure information.
 dat = dat[60:]
