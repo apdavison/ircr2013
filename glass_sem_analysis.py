@@ -2,6 +2,7 @@
 from http://scipy-lectures.github.com/
 """
 
+from __future__ import print_function
 import numpy as np
 import pylab as pl
 import matplotlib.cm as cm
@@ -13,8 +14,9 @@ import sys
 parameter_file, img_file = sys.argv[1:3]
 
 parameters = {}
-execfile(parameter_file, parameters)
- 
+with open(parameter_file) as f:
+    exec(f.read(), parameters)
+
 img_id, ext = os.path.splitext(img_file)
 
 timestamp = datetime.now()
@@ -79,5 +81,5 @@ bubbles_labels, bubbles_nb = ndimage.label(void)
 bubbles_areas = np.bincount(bubbles_labels.ravel())[1:]
 mean_bubble_size = bubbles_areas.mean()
 median_bubble_size = np.median(bubbles_areas)
-print mean_bubble_size, median_bubble_size
+print(mean_bubble_size, median_bubble_size)
 
