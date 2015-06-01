@@ -4,6 +4,8 @@ from http://scipy-lectures.github.com/
 
 from __future__ import print_function
 import numpy as np
+import matplotlib
+matplotlib.use('Agg')
 import pylab as pl
 import matplotlib.cm as cm
 from scipy import ndimage
