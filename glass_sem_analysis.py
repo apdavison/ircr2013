@@ -54,7 +54,7 @@ sand = np.logical_and(filtdat > parameters["bubble_sand_boundary"], filtdat <= p
 glass = filtdat > parameters["sand_glass_boundary"]
 
 # Create image with each phase a different colour
-phases = void.astype(np.int) + 2*glass.astype(np.int) + 3*sand.astype(np.int)
+phases = void.astype(int) + 2*glass.astype(int) + 3*sand.astype(int)
 pl.clf()
 colourmap = getattr(cm, parameters["phases_colourmap"])
 pl.imshow(phases, cmap=colourmap, origin="lower")
@@ -84,4 +84,3 @@ bubbles_areas = np.bincount(bubbles_labels.ravel())[1:]
 mean_bubble_size = bubbles_areas.mean()
 median_bubble_size = np.median(bubbles_areas)
 print(mean_bubble_size, median_bubble_size)
-
